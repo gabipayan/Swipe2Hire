@@ -11,16 +11,34 @@ import { Candidate } from '../interfaces/Candidate.interface'; // Importar la in
 const CandidateSearch = () => {
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [usernameIndex, setUsernameIndex] = useState(0);
+  const [candidateList, setCandidateList] = useState<string[]>([]);
 
-  const usernames = ['octocat', 'torvalds', 'gaearon', 'sindresorhus']; // ejemplo
+  //const usernames = ['octocat', 'torvalds', 'gaearon', 'sindresorhus']; // ejemplo
+
+  const fetchCandidateSet = async () => {
+    try {
+      const data = await searchGithub();
+      console.log("Data: ", data)
+      const usernames = data.map((user: any) => user.login);
+      setCandidateList(usernames);
+      await fetchNextCandidate();
+    } catch (error) {
+      console.error('Error fetching candidates:', error);
+      // return [];
+    }
+  }
 
   const fetchNextCandidate = async () => {
-    if (usernameIndex >= usernames.length) {
+    if (usernameIndex >= candidateList.length) {
       setCandidate(null);
       return;
     }
-
-    const data = await searchGithubUser(usernames[usernameIndex]);
+    let username = candidateList[usernameIndex];
+    console.log("Username: ", username)
+    if(!username) {
+      username = 'octocat';
+    }
+    const data = await searchGithubUser(username);
     setCandidate(data);
     setUsernameIndex(prev => prev + 1);
   };
@@ -38,6 +56,7 @@ const CandidateSearch = () => {
   };
 
   useEffect(() => {
+    fetchCandidateSet();
     fetchNextCandidate();
   }, []);
 

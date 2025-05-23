@@ -27,7 +27,7 @@ const searchGithubUser = async (username: string) => {
   try {
     const response = await fetch(`https://api.github.com/users/${username}`, {
       headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,  // Sugerencia por ChatGPT poner token: Authorization: `Token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+        Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`
       },
     });
     const data = await response.json();
